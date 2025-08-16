@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pink Pals Suite — PWA</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#ff69b4" />
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header" role="banner">
+    <h1>💖 Pink Pals Suite</h1>
+    <nav class="tabs" aria-label="Mini-games">
+      <button class="tab active" data-tab="memory" aria-controls="panel-memory">Memory</button>
+      <button class="tab" data-tab="coloring" aria-controls="panel-coloring">Coloring</button>
+      <button class="tab" data-tab="dressup" aria-controls="panel-dressup">Dress‑Up</button>
+      <button class="tab" data-tab="math" aria-controls="panel-math">Quick Math</button>
+    </nav>
+    <div class="header-actions">
+      <button id="themeBtn" class="btn small" aria-label="Choose theme">Theme</button>
+      <button id="installBtn" class="btn small" aria-label="Install app">Install</button>
+      <button id="parentBtn" class="btn small outline" aria-label="Parent mode">Parent</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Memory -->
+    <section id="panel-memory" class="panel active" aria-labelledby="memory">
+      <div class="controls">
+        <div class="control-row">
+          <label for="difficulty">Difficulty:</label>
+          <select id="difficulty">
+            <option value="easy">Easy (6 pairs)</option>
+            <option value="medium" selected>Medium (8 pairs)</option>
+            <option value="hard">Hard (10 pairs)</option>
+          </select>
+          <button id="newGameBtn" class="btn">New Game</button>
+        </div>
+        <div class="status-row" role="status" aria-live="polite">
+          <span>Moves: <b id="moves">0</b></span>
+          <span>Time: <b id="time">00:00</b></span>
+          <span>Best: <b id="best">—</b></span>
+          <button id="soundBtn" class="btn">🔈</button>
+        </div>
+      </div>
+      <section id="grid" class="grid" aria-label="Memory card grid"></section>
+    </section>
+
+    <!-- Coloring -->
+    <section id="panel-coloring" class="panel" aria-labelledby="coloring">
+      <div class="controls">
+        <div class="control-row">
+          <label for="pageSel">Page:</label>
+          <select id="pageSel">
+            <option value="butterfly">Butterfly</option>
+            <option value="flower">Flower</option>
+            <option value="castle">Castle</option>
+          </select>
+          <label for="brushSize">Brush:</label>
+          <input id="brushSize" type="range" min="4" max="40" value="18"/>
+          <button id="clearColoring" class="btn">Clear</button>
+          <button id="saveColoring" class="btn">Save</button>
+        </div>
+      </div>
+      <canvas id="colorCanvas" width="900" height="600" aria-label="Coloring canvas"></canvas>
+    </section>
+
+    <!-- Dress-up -->
+    <section id="panel-dressup" class="panel" aria-labelledby="dressup">
+      <div class="controls">
+        <div class="control-row">
+          <button class="btn" data-piece="dress1">Dress 1</button>
+          <button class="btn" data-piece="dress2">Dress 2</button>
+          <button class="btn" data-piece="top1">Top</button>
+          <button class="btn" data-piece="skirt1">Skirt</button>
+          <button class="btn" data-piece="hair1">Hair</button>
+          <button class="btn" data-piece="shoes1">Shoes</button>
+          <button id="clearDress" class="btn outline">Reset</button>
+          <button id="saveDress" class="btn">Save</button>
+        </div>
+      </div>
+      <div class="dressup-stage">
+        <svg id="avatarBase" viewBox="0 0 300 400" aria-label="Avatar base">
+          <rect x="0" y="0" width="300" height="400" fill="url(#bg)"/>
+          <defs>
+            <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fff"/>
+              <stop offset="100%" stop-color="#ffe4ef"/>
+            </linearGradient>
+          </defs>
+          <circle cx="150" cy="100" r="40" fill="#ffd8b1"/>
+          <rect x="115" y="140" width="70" height="120" rx="20" fill="#ffc0a0"/>
+        </svg>
+        <div id="dressLayer" class="layer"></div>
+      </div>
+    </section>
+
+    <!-- Math -->
+    <section id="panel-math" class="panel" aria-labelledby="math">
+      <div class="controls">
+        <div class="control-row">
+          <label for="mathDiff">Level:</label>
+          <select id="mathDiff">
+            <option value="easy">Easy (1–10)</option>
+            <option value="medium" selected>Medium (1–20)</option>
+            <option value="hard">Hard (1–50)</option>
+          </select>
+          <button id="nextQ" class="btn">Next</button>
+        </div>
+        <div class="status-row">
+          <span>Score: <b id="mathScore">0</b></span>
+          <span>Streak: <b id="mathStreak">0</b></span>
+        </div>
+      </div>
+      <div class="math-area">
+        <div id="question" class="question">3 + 4 = ?</div>
+        <div class="answers">
+          <button class="ans"></button>
+          <button class="ans"></button>
+          <button class="ans"></button>
+          <button class="ans"></button>
+        </div>
+        <div id="mathFeedback" class="feedback" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Parent modal -->
+  <section id="parentModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="parentTitle" hidden>
+    <div class="modal-content">
+      <h2 id="parentTitle">Parent Mode</h2>
+      <p class="small">Answer to continue: <b id="gateQ"></b></p>
+      <input id="gateA" type="number" inputmode="numeric" class="input" placeholder="Answer"/>
+      <div class="divider"></div>
+      <label><input type="checkbox" id="limitSound"> Disable sounds</label><br/>
+      <label><input type="checkbox" id="limitHard"> Hide hard difficulties</label><br/>
+      <label>Session limit (minutes): <input id="limitMinutes" type="number" min="0" max="180" value="0" class="input small"/></label>
+      <div class="actions">
+        <button id="saveParent" class="btn">Save</button>
+        <button id="closeParent" class="btn outline">Close</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Theme modal -->
+  <section id="themeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="themeTitle" hidden>
+    <div class="modal-content">
+      <h2 id="themeTitle">Choose Theme</h2>
+      <div class="themes">
+        <button class="theme" data-theme="pink">Pink Dream</button>
+        <button class="theme" data-theme="lavender">Lavender Sky</button>
+        <button class="theme" data-theme="mint">Mint Breeze</button>
+        <button class="theme" data-theme="sunset">Sunset Glow</button>
+      </div>
+      <div class="actions">
+        <button id="closeTheme" class="btn">Close</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="app-footer">
+    <small>Designed for ages 5–15. No ads. Works offline. 💗</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
